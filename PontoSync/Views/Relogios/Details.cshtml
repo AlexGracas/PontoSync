@@ -1,0 +1,133 @@
+﻿@model PontoSync.Models.Relogio
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Relogio</h4>
+    <hr />
+    <div>
+        <dl class="row">
+            <dt class="col-sm-2">
+                <h5>Inicio</h5>
+            </dt>
+            <dd class="col-sm-10">
+                <input id="datepickerInicio" type="text" class="form-control dtpicker" value="@ViewBag.Inicio.ToString("yyyy-MM-dd")" />
+            </dd>
+            <dt class="col-sm-2">
+                <h5>Fim</h5>
+            </dt>
+            <dd class="col-sm-10">
+                <input id="datepickerFim" type="text" class="form-control dtpicker" value="@ViewBag.Fim.ToString("yyyy-MM-dd")" />
+            </dd>
+        </dl>
+        <a onclick="visualizar();" class="btn btn-primary float-right" role="button">Visualizar</a>
+    </div>   
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.URL)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.URL)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Descrição)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Descrição)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UltimaLeitura)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UltimaLeitura)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UltimoSucesso)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UltimoSucesso)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UltimaFalha)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UltimaFalha)
+        </dd>
+    </dl>
+    <h4>Marcações da última semana</h4>
+    <hr />
+    <a asp-action="MigrarIntervalo" asp-route-id="@Model.Id" asp-route-inicio="@Model.Registros.Min(r=>r.Marcacao).ToString("yyyy-MM-dd")"
+       asp-route-fim="@Model.Registros.Max(r=>r.Marcacao).ToString("yyyy-MM-dd")" class="btn btn-primary float-right" role="button">Migrar Todos</a>
+    <div></div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Registros.First().Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Registros.First().Matricula)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Registros.First().Migrado)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Registros.First().Marcacao)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Registros)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Matricula)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Migrado)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Marcacao)
+                    </td>
+                    <td>
+                        @if (!item.Migrado)
+                        {
+                            <a asp-action="Migrar" asp-route-id="@Model.Id" asp-route-idRegistro="@item.Id">Migrar</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $(".dtpicker").datepicker();
+        });
+        function visualizar(){
+            window.location.href = "/Relogios/Details/" + @Model.Id + "/" + document.getElementById("datepickerInicio").value +
+                "/" + document.getElementById("datepickerFim").value;
+        };
+
+    </script>
+}

@@ -1,0 +1,75 @@
+﻿@model IEnumerable<PontoSync.Models.MarcacaoFrequencia>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MatServidor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataMarcacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HoraMarcacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dispositivo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StatusMarcacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoOrigem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sq_Importacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MatServidor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataMarcacao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HoraMarcacao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dispositivo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusMarcacao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoOrigem)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sq_Importacao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuario)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
