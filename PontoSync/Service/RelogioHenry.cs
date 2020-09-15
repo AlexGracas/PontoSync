@@ -143,7 +143,10 @@ namespace PontoSync.Service
 
         private void VerificarRegistrosEAtualizarBanco(ICollection<Registro> registros)
         {
-            foreach(var registro in registros)
+            //Cria o serviço, usando Injeção de Dependência.
+            MarcacaoFrequenciaService marcacaoFrequenciaService =
+                (MarcacaoFrequenciaService)ActivatorUtilities.CreateInstance(_provider, typeof(MarcacaoFrequenciaService));
+            foreach (var registro in registros)
             {
                 var registroAdicionavel = !_context.Registros.Where(r => r.Matricula.CompareTo(registro.Matricula)==0
                                         && r.IdRelogio == registro.IdRelogio
@@ -154,7 +157,7 @@ namespace PontoSync.Service
                     IdRelogio = registro.IdRelogio,
                     Marcacao = registro.Marcacao,
                     Matricula = registro.Matricula,
-                    Migrado = registro.Migrado,
+                    Migrado = marcacaoFrequenciaService.VerificarMigrado(registro),
                     idMarcacaoRelogio = registro.idMarcacaoRelogio});
                 }
             }

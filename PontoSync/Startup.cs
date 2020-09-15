@@ -38,12 +38,14 @@ namespace PontoSync
             services.AddDbContext<FrequenciaContext>(options =>
                     options.UseOracle(Configuration.GetConnectionString("FrequenciaContext"),
                     options => options.UseOracleSQLCompatibility("11")));
-
-            services.AddCronJob<LeituraRelogioCronJob>(c =>
-            {
-                c.TimeZoneInfo = TimeZoneInfo.Local;
-                c.CronExpression = @"*/15 * * * *";
-            });
+            if (1==2){
+                services.AddCronJob<LeituraRelogioCronJob>(c =>
+                {
+                    c.TimeZoneInfo = TimeZoneInfo.Local;
+                    c.CronExpression = @"*/15 * * * *";
+                });
+            }
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,6 +73,11 @@ namespace PontoSync
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapAreaControllerRoute(
+                       name: "areas",
+                       areaName: "myarea",
+                           pattern: "{area:exists}/{controller=Home}/{did?}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

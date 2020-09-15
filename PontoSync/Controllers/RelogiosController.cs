@@ -57,6 +57,8 @@ namespace PontoSync.Controllers
             IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
             relogioService.LancarRegistros(relogio, registro);
             relogio.Registros = registro;
+            ViewBag.Fim = final;
+            ViewBag.Inicio = inicio;
             return View("Details", relogio);
         }
 
@@ -79,7 +81,8 @@ namespace PontoSync.Controllers
             }
             IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
             relogioService.LancarRegistro(relogio,registro);
-
+            ViewBag.Fim = registro.Marcacao.Date;
+            ViewBag.Inicio = registro.Marcacao.Date;
             return View("Details",relogio);
         }
 

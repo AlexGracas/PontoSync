@@ -36,6 +36,24 @@ namespace PontoSync.Service
             return false;
         }
 
+        public bool VerificarMigrado(Registro registro)
+        {
+            try
+            {
+                var servidor = _frequenciaContext.Servidores.FromSqlRaw($"select s.mat_servidor, s.nom, s.e_mail from srh2.servidor s where s.mat_servidor = {int.Parse(registro.Matricula)} ").FirstOrDefault();
+                if (VerificarDuplicado(registro, servidor.Matricula))
+                {
+                    _logger.LogWarning("Tentando lançar registro duplicado.");
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Erro ao Verificar se o registro do servidor {registro.Matricula} na hora {registro.Marcacao} já foi migrado.");
+            }
+            return false;
+        }
+
         public void LancarRegistro(Registro registro)
         {
             int lastUsedId = _frequenciaContext.MarcacaoFrequencia.Max(mf => mf.Id);
