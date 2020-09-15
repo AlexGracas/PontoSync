@@ -28,7 +28,10 @@ namespace PontoSync.Service
             if (_frequenciaContext.MarcacaoFrequencia.Any(
             mf => mf.DataMarcacao == registro.Marcacao.Date &&
             mf.MatServidor == Matricula &&
-            mf.HoraMarcacao == registro.Marcacao.ToString("HH:mm"))
+            (mf.HoraMarcacao == registro.Marcacao.AddMinutes(1).ToString("HH:mm") ||
+            mf.HoraMarcacao == registro.Marcacao.ToString("HH:mm") ||
+            mf.HoraMarcacao == registro.Marcacao.AddMinutes(-1).ToString("HH:mm"))
+            )
             )
             {
                 return true;
