@@ -38,11 +38,11 @@ namespace PontoSync
             services.AddDbContext<FrequenciaContext>(options =>
                     options.UseOracle(Configuration.GetConnectionString("FrequenciaContext"),
                     options => options.UseOracleSQLCompatibility("11")));
-            if (1==2){
+            if (1==1){
                 services.AddCronJob<LeituraRelogioCronJob>(c =>
                 {
                     c.TimeZoneInfo = TimeZoneInfo.Local;
-                    c.CronExpression = @"*/15 * * * *";
+                    c.CronExpression = @"*/3 * * * *";
                 });
             }
             
