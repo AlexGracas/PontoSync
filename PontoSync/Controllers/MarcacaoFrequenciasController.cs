@@ -24,7 +24,7 @@ namespace PontoSync.Controllers
         // GET: MarcacaoFrequencias
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MarcacaoFrequencia.Where(mf => mf.DataMarcacao > DateTime.Now.AddDays(-2)).OrderBy(mf=> mf.DataMarcacao ).ToListAsync());
+            return View(await _context.MarcacaoFrequencia.Where(mf => mf.DataMarcacao > DateTime.Now.AddDays(-7)).OrderBy(mf=> mf.DataMarcacao ).ToListAsync());
         }
 
         // GET: MarcacaoFrequencias/Details/5

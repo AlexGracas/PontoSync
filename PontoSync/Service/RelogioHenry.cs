@@ -57,17 +57,18 @@ namespace PontoSync.Service
             return @"rep.html?pgCode=8&opType=5&lblId=2&visibleDiv=info";
         }
 
-        private async void Login(Relogio relogio)
+        private async Task<bool> Login(Relogio relogio)
         {
             try
             {
                 HttpResponseMessage response = await HttpClient.GetAsync(relogio.URL.ToString() + LoginURL(relogio.Usuario, relogio.Senha));
                 response.EnsureSuccessStatusCode();
                 _logger.LogInformation("Loggin Realizado com sucesso no relógio: " + relogio.Nome);
+                return true;
             }catch(Exception e)
             {
                 _logger.LogError(e,"Erro ao realizar login no relógio: " + relogio.Nome);
-                throw e;
+                return false; ;
             }
         }
 
@@ -79,7 +80,10 @@ namespace PontoSync.Service
             try
             {
                 relogio = _context.Relogios.Find(relogio.Id);
-                Login(relogio);
+                if (!(await Login(relogio)))
+                {
+                    throw new Exception("Não foi possível realizar login no relógio");
+                }
                 
                 relogio.UltimaLeitura = DateTime.Now;
                 String urlNow = relogio.URL.ToString() + DownloadURL(Inicio, Fim);

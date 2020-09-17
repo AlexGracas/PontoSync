@@ -73,17 +73,26 @@ namespace PontoSync.Controllers
             {
                 return NotFound();
             }
-            var relogio = await  _context.Relogios.FindAsync(id);
-            var registro = await _context.Registros.FindAsync(idRegistro);
-            if (registro == null)
+            try
             {
-                return NotFound();
+                var relogio = await _context.Relogios.FindAsync(id);
+                var registro = await _context.Registros.FindAsync(idRegistro);
+                if (registro == null)
+                {
+                    return NotFound();
+                }
+                IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
+                relogioService.LancarRegistro(relogio, registro);
+                ViewBag.Fim = registro.Marcacao.Date;
+                ViewBag.Inicio = registro.Marcacao.Date;
+                return View("Details", relogio);
             }
-            IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
-            relogioService.LancarRegistro(relogio,registro);
-            ViewBag.Fim = registro.Marcacao.Date;
-            ViewBag.Inicio = registro.Marcacao.Date;
-            return View("Details",relogio);
+            catch(Exception e)
+            {
+                _logger.LogError(e, $"Erro ao migrar Relógio {id} e o registro {idRegistro}");
+                throw e;
+            }
+
         }
 
         // GET: Relogios/Details/5
@@ -130,7 +139,7 @@ namespace PontoSync.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,URL,Nome,UltimaLeitura,UltimoSucess,UltimaFalha,Usuario,Senha")] Relogio relogio)
+        public async Task<IActionResult> Create([Bind("Id,URL,Nome,Descricao,UltimaLeitura,UltimoSucess,UltimaFalha,Usuario,Senha")] Relogio relogio)
         {
             if (ModelState.IsValid)
             {
@@ -165,7 +174,7 @@ namespace PontoSync.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,URL,Nome,UltimaLeitura,UltimoSucess,UltimaFalha, Usuario, Senha")] Relogio relogio)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,URL,Descricao,Nome,Usuario, Senha")] Relogio relogio)
         {
             if (id != relogio.Id)
             {

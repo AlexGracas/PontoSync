@@ -25,7 +25,7 @@ namespace PontoSync.Models
         public String Nome { get; set; }
 
         [Column(name: "DESCRICAO")]
-        public String Descrição { get; set; }
+        public String Descricao { get; set; }
 
         [DataType(DataType.DateTime)]
         [Column(name: "ULTIMALEITURA")]
