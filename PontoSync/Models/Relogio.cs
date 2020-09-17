@@ -17,8 +17,7 @@ namespace PontoSync.Models
         public int Id { get; set; }
 
         [Column(name: "URL")]
-        [DataType(DataType.Url)]
-        public Uri URL { get; set; }
+        public String URL { get; set; }
 
         [Column(name: "NOME")]
         [DataType(DataType.Text)]

@@ -30,12 +30,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.UltimaFalha)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Usuario)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Senha)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -59,12 +53,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UltimaFalha)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Usuario)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Senha)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |

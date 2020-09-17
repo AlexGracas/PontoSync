@@ -63,6 +63,8 @@ namespace PontoSync.Service
             {
                 HttpResponseMessage response = await HttpClient.GetAsync(relogio.URL.ToString() + LoginURL(relogio.Usuario, relogio.Senha));
                 response.EnsureSuccessStatusCode();
+                if (response.Content.ReadAsStringAsync().Result.ToString().ToLower().Contains("incorretos"))
+                    return false;
                 _logger.LogInformation("Loggin Realizado com sucesso no relógio: " + relogio.Nome);
                 return true;
             }catch(Exception e)

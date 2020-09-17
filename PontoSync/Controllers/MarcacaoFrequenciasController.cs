@@ -11,7 +11,7 @@ using PontoSync.Models;
 
 namespace PontoSync.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "GRUPO_AUTORIZACAO")]
     public class MarcacaoFrequenciasController : Controller
     {
         private readonly FrequenciaContext _context;
@@ -27,6 +27,7 @@ namespace PontoSync.Controllers
             return View(await _context.MarcacaoFrequencia.Where(mf => mf.DataMarcacao > DateTime.Now.AddDays(-7)).OrderBy(mf=> mf.DataMarcacao ).ToListAsync());
         }
 
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         // GET: MarcacaoFrequencias/Details/5
         public async Task<IActionResult> Details(int? id)
         {

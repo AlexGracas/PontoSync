@@ -13,7 +13,7 @@ namespace TestePontoSync
         public void LeituraTest() {
             Relogio relogio = new Relogio();
             relogio.Nome = "ABC";
-            relogio.URL = new Uri("http://10.6.9.7");
+            relogio.URL = "http://10.6.9.7";
             relogio.Usuario = "primmesf";
             relogio.Senha = "121314";
             IRelogioService relogioService = new RelogioHenry(null,null,null,null);

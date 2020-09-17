@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace PontoSync
 {
@@ -33,7 +35,7 @@ namespace PontoSync
         public IConfiguration Configuration { get; }
 
         public static string PublicClientId { get; private set; }
-      
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -44,24 +46,24 @@ namespace PontoSync
 
             services.AddDbContext<PontoSyncContext>(options =>
                     options.UseOracle(
-                        Configuration.GetConnectionString("PontoSyncContext"), 
+                        Configuration.GetConnectionString("PontoSyncContext"),
                         options => options.UseOracleSQLCompatibility("11")));
 
             services.AddDbContext<FrequenciaContext>(options =>
                     options.UseOracle(Configuration.GetConnectionString("FrequenciaContext"),
                     options => options.UseOracleSQLCompatibility("11")));
 
-            Boolean isLeituraCronEnabled = Configuration.GetValue<Boolean>("Cron:IsLeituraDigitalCronEnabled",false);
+            Boolean isLeituraCronEnabled = Configuration.GetValue<Boolean>("Cron:IsLeituraDigitalCronEnabled", false);
             if (isLeituraCronEnabled)
             {
                 services.AddCronJob<LeituraRelogioCronJob>(c =>
-                {                    
+                {
                     c.TimeZoneInfo = TimeZoneInfo.Local;
                     c.CronExpression = Configuration.GetValue<String>("Cron:LeituraDigitalCron", @"*/10 * * * *");
                 });
             }
 
-         
+
             String serverAddress = Configuration["Authentication:KeycloakAuthentication:ServerAddress"];
             String authorityAddress = serverAddress + "/auth/realms/" + Configuration["Authentication:KeycloakAuthentication:Realm"];
             String audience = Configuration["Authentication:KeycloakAuthentication:ClientId"];
@@ -81,9 +83,19 @@ namespace PontoSync
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.Scope.Add("openid");
                 });
-            services.AddAuthorization();
+            IEnumerable<String> grupos = Configuration.GetSection("Authentication:Grupos").Get<string[]>();
+            services.AddAuthorization(
+                options =>
+                options.AddPolicy("GRUPO_AUTORIZACAO",
+                    p => p.Requirements.Add( new RequisitoGrupos(grupos)))
+                );
+
+            services.AddSingleton<IAuthorizationHandler, RequisitoGruposHandler>();
 
         }
+
+      
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

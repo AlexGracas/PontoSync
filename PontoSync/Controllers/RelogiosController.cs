@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using PontoSync.Service;
 
 namespace PontoSync.Controllers
 {
+    [Authorize]
     public class RelogiosController : Controller
     {
         private readonly PontoSyncContext _context;
@@ -40,6 +42,7 @@ namespace PontoSync.Controllers
             return await Details(id, DateTime.Now.AddDays(-7), DateTime.Now);
         }
 
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         [HttpGet("{controller}/MigrarIntervalo/{id}/{Inicio}/{Fim}")]
         public async Task<IActionResult> MigrarIntervalo(int? id, DateTime inicio, DateTime final)
         {
@@ -63,6 +66,7 @@ namespace PontoSync.Controllers
         }
 
 
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         public async Task<IActionResult> Migrar(int? id, int? idRegistro)
         {
             if (id == null)
@@ -95,6 +99,7 @@ namespace PontoSync.Controllers
 
         }
 
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         // GET: Relogios/Details/5
         [HttpGet("{controller}/Details/{id}/{Inicio?}/{Fim?}")]
         public async Task<IActionResult> Details(int? id, DateTime? Inicio, DateTime? Fim )
@@ -128,6 +133,7 @@ namespace PontoSync.Controllers
             return View(relogio);
         }
 
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         // GET: Relogios/Create
         public IActionResult Create()
         {
@@ -139,6 +145,7 @@ namespace PontoSync.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         public async Task<IActionResult> Create([Bind("Id,URL,Nome,Descricao,UltimaLeitura,UltimoSucess,UltimaFalha,Usuario,Senha")] Relogio relogio)
         {
             if (ModelState.IsValid)
@@ -151,6 +158,7 @@ namespace PontoSync.Controllers
         }
 
         // GET: Relogios/Edit/5
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -174,6 +182,7 @@ namespace PontoSync.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,URL,Descricao,Nome,Usuario, Senha")] Relogio relogio)
         {
             if (id != relogio.Id)
@@ -205,6 +214,7 @@ namespace PontoSync.Controllers
         }
 
         // GET: Relogios/Delete/5
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -225,6 +235,7 @@ namespace PontoSync.Controllers
         // POST: Relogios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var relogio = await _context.Relogios.FindAsync(id);
