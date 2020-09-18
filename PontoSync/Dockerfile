@@ -20,6 +20,10 @@ FROM base AS final
 ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN dpkg-reconfigure -f noninteractive tzdata
+ADD /usr/local/share/ca-certificates/tre-root-v3.crt /usr/local/share/ca-certificates/tre-root-v3.crt
+ADD /usr/local/share/ca-certificates/ca-cert-03.crt /usr/local/share/ca-certificates/ca-cert-03.crt
+RUN chmod 644 /usr/local/share/ca-certificates/ca-cert-03.crt && update-ca-certificates
+RUN chmod 644 /usr/local/share/ca-certificates/v3.crt && update-ca-certificates
 WORKDIR /app
 COPY --from=publish /app/publish .
 
