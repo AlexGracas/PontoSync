@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using Microsoft.IdentityModel.Logging;
 
 namespace PontoSync
 {
@@ -39,6 +40,7 @@ namespace PontoSync
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
             services.AddControllersWithViews();
 
             //options.UseOracleSQLCompatibility("11")

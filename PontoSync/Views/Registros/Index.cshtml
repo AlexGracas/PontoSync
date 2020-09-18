@@ -1,0 +1,91 @@
+﻿@model IEnumerable<PontoSync.Models.Registro>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            <h5>Matrícula</h5>
+        </dt>
+        <dd class="col-sm-10">
+            <input id="matricula" type="text" class="form-control" value="@ViewBag.Matricula" />
+        </dd>
+        <dt class="col-sm-2">
+            <h5>Migrados</h5>
+        </dt>
+        <dd class="col-sm-10">
+            <select id="migrado" name="cars">
+                <option value="NA">Todos</option>
+                <option value="Migrado">Migrados</option>
+                <option value="NMigrado">Não Migrados</option>
+            </select>
+        </dd>
+    </dl>
+    <a onclick="procurar();" class="btn btn-primary float-right" role="button">Visualizar</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.idMarcacaoRelogio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Matricula)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Marcacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Relogio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MigradoFrequencia)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.idMarcacaoRelogio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Matricula)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Marcacao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Relogio.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MigradoFrequencia)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+        function procurar(){
+            window.location.href = "/Registros/Index/" + document.getElementById("matricula").value +
+                "/" + document.getElementById("migrado").value;
+        };
+
+    </script>
+}
