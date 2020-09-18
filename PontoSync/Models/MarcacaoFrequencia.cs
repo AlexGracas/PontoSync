@@ -19,6 +19,7 @@ namespace PontoSync.Models
             MatServidor = Matricula;
             Dispositivo = registro.Relogio.Nome;
             TipoOrigem = "REG";
+            Cracha = Matricula;
             Usuario = Matricula;
             StatusMarcacao = "DEF";
             Id = id;
@@ -36,6 +37,8 @@ namespace PontoSync.Models
         [Display(Name = "Data")]
         public DateTime DataMarcacao{get;set;}
 
+        [Column(name: "NR_CRACHA")]
+        public string Cracha { get; set; }
 
         [Column(name: "MARCACAO")]
         [Display(Name = "Hora")]

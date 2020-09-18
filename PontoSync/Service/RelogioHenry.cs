@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using PontoSync.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -138,7 +139,7 @@ namespace PontoSync.Service
                     var termos = linha.Split("[");
                     novo.idMarcacaoRelogio = termos[0];
                     novo.Matricula = termos[2];
-                    novo.Marcacao = DateTime.Parse(termos[3]);
+                    novo.Marcacao = DateTime.Parse(termos[3], (new CultureInfo("pt-BR")).DateTimeFormat);
                     novo.Relogio = relogio;
                     novo.IdRelogio = relogio.Id;
                     registros.Add(novo);

@@ -120,9 +120,15 @@ namespace PontoSync.Controllers
             ViewBag.Inicio = Inicio;
             var relogio = await _context.Relogios
                 .FirstOrDefaultAsync(m => m.Id == id);
-            IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
-            await relogioService.LerRelogioELancarAsync(relogio, Inicio.Value, Fim.Value, lancar: false);
+            try
+            {
+                IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
+                await relogioService.LerRelogioELancarAsync(relogio, Inicio.Value, Fim.Value, lancar: false);
 
+            }catch(Exception e)
+            {
+                _logger.LogError("Não foi possível ler o relógio. Mostrando dados adquiridos anteriormente");
+            }
             relogio.Registros = _context.Registros.Where(r => r.IdRelogio == relogio.Id && r.Marcacao >Inicio && r.Marcacao < Fim).OrderBy(r=> r.Marcacao).ToList();
 
             if (relogio == null)
