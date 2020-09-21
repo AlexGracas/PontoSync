@@ -68,7 +68,8 @@
                     @Html.DisplayFor(modelItem => item.MigradoFrequencia)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Migrar" asp-controller="Relogios" asp-route-id="@item.Relogio.Id" asp-route-idRegistro="@item.Id">Migrar</a>
                 </td>
             </tr>
         }
