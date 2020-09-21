@@ -43,26 +43,30 @@ namespace PontoSync.Controllers
         }
 
         [Authorize(Policy = "GRUPO_AUTORIZACAO")]
-        [HttpGet("{controller}/MigrarIntervalo/{id}/{Inicio}/{Fim}")]
-        public async Task<IActionResult> MigrarIntervalo(int? id, DateTime inicio, DateTime final)
+        [HttpPost("{controller}/MigrarRegistros/{id}")]
+        public async Task<IActionResult> MigrarIntervalo(int id, [FromBody] int[] registrosId)
         {
+
             if (id == null)
             {
                 return NotFound();
             }           
             var relogio = await _context.Relogios.FindAsync(id);
-            var registro = await _context.Registros.Where(r => r.Marcacao >= inicio && r.Marcacao <= final 
-                                && r.IdRelogio == id && r.MigradoFrequencia == "F").ToListAsync();
-            if (registro == null)
+            
+            if(relogio == null)
             {
                 return NotFound();
             }
+            if(registrosId == null)
+            {
+                return BadRequest();
+            }
+            var registros = _context.Registros.Where(rg => rg.IdRelogio == id && registrosId.Contains(rg.Id)).ToList();
+
             IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
-            relogioService.LancarRegistros(relogio, registro);
-            relogio.Registros = registro;
-            ViewBag.Fim = final;
-            ViewBag.Inicio = inicio;
-            return View("Details", relogio);
+            relogioService.LancarRegistros(relogio, registros);
+            relogio.Registros = registros;
+            return Ok();
         }
 
 
@@ -123,14 +127,13 @@ namespace PontoSync.Controllers
             try
             {
                 IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(this._serviceProvider, typeof(RelogioHenry));
-                await relogioService.LerRelogioELancarAsync(relogio, Inicio.Value, Fim.Value, lancar: false);
+                await relogioService.LerRelogioELancarAsync(relogio, Inicio.Value, Fim.Value.AddDays(1), lancar: false);
 
             }catch(Exception e)
             {
                 _logger.LogError("Não foi possível ler o relógio. Mostrando dados adquiridos anteriormente");
             }
-            relogio.Registros = _context.Registros.Where(r => r.IdRelogio == relogio.Id && r.Marcacao >Inicio && r.Marcacao < Fim).OrderBy(r=> r.Marcacao).ToList();
-
+            relogio.Registros = _context.Registros.Where(r => r.IdRelogio == relogio.Id && r.Marcacao > Inicio && r.Marcacao < Fim).OrderBy(r => r.Marcacao).ToList();
             if (relogio == null)
             {
                 return NotFound();
@@ -138,6 +141,7 @@ namespace PontoSync.Controllers
 
             return View(relogio);
         }
+
 
         [Authorize(Policy = "GRUPO_AUTORIZACAO")]
         // GET: Relogios/Create

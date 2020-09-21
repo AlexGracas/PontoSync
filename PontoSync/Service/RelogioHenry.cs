@@ -14,7 +14,7 @@ namespace PontoSync.Service
     public class RelogioHenry: IRelogioService
     {
 
-        String Download = @"rep.html?pgCode=8&opType=5&lblId=0&visibleDiv=info&lblNsrI=000000001&lblNsrF=000142664&lblDataI=27/01/20+15:57&lblDataF=13/03/20+18:00&fileinput=";
+        //String Download = @"rep.html?pgCode=8&opType=5&lblId=0&visibleDiv=info&lblNsrI=000000001&lblNsrF=000142664&lblDataI=27/01/20+15:57&lblDataF=13/03/20+18:00&fileinput=";
 
         private readonly ILogger<RelogioHenry> _logger;
         private readonly Data.PontoSyncContext _context;
@@ -40,11 +40,11 @@ namespace PontoSync.Service
             string param = "";
             if (Inicio != DateTime.MinValue || Fim != DateTime.MaxValue)
             {
-                param = "&lblDataI=" +
-                    Inicio.ToString("dd/MM/yy+HH:mm") +
+                param = "lblDataI=" +
+                    Inicio.ToString("dd/MM/yy HH:mm") +
                     //27/01/20+15:57
                     @"&lblDataF=" +
-                    Fim.ToString("dd/MM/yy+HH:mm") +
+                    Fim.ToString("dd/MM/yy HH:mm") +
                     //13/03/20+18:00
                     @"&fileinput=";
                 param = param.Replace("/", "%2F");
@@ -55,7 +55,7 @@ namespace PontoSync.Service
 
         private String DownloadURL()
         {
-            return @"rep.html?pgCode=8&opType=5&lblId=2&visibleDiv=info";
+            return @"rep.html?pgCode=8&opType=5&lblId=2&visibleDiv=info&lblNsrI=&lblNsrF=&";
         }
 
         private async Task<bool> Login(Relogio relogio)
@@ -83,19 +83,19 @@ namespace PontoSync.Service
             try
             {
                 relogio = _context.Relogios.Find(relogio.Id);
+                relogio.UltimaLeitura = DateTime.Now;
+
                 if (!(await Login(relogio)))
                 {
                     throw new Exception("Não foi possível realizar login no relógio");
-                }
-                
-                relogio.UltimaLeitura = DateTime.Now;
+                }                                
                 String urlNow = relogio.URL.ToString() + DownloadURL(Inicio, Fim);
                 HttpResponseMessage response = await HttpClient.GetAsync(urlNow);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var registros = CriarRegistrosDeTexto(relogio, responseBody);
 
-                _logger.LogInformation($"Lido {registros.Count} do relógio {relogio.Nome}");
+                _logger.LogInformation($"Lido {registros.Count} registros do relógio {relogio.Nome}");
                 VerificarRegistrosEAtualizarBanco(registros);
                 relogio.UltimoSucesso = relogio.UltimaLeitura;
                 _logger.LogInformation($"Marcações do relógio {relogio.Nome} lançadas com sucesso.");
@@ -158,14 +158,22 @@ namespace PontoSync.Service
                 var registroAdicionavel = !_context.Registros.Where(r => r.Matricula.CompareTo(registro.Matricula)==0
                                         && r.IdRelogio == registro.IdRelogio
                                         && r.Marcacao == registro.Marcacao).Any();
-                if (registroAdicionavel)
+                try
                 {
-                    _context.Registros.Add(new Registro() { 
-                    IdRelogio = registro.IdRelogio,
-                    Marcacao = registro.Marcacao,
-                    Matricula = registro.Matricula,
-                    Migrado = marcacaoFrequenciaService.VerificarMigrado(registro),
-                    idMarcacaoRelogio = registro.idMarcacaoRelogio});
+                    if (registroAdicionavel)
+                    {
+                        _context.Registros.Add(new Registro()
+                        {
+                            IdRelogio = registro.IdRelogio,
+                            Marcacao = registro.Marcacao,
+                            Matricula = registro.Matricula,
+                            Migrado = marcacaoFrequenciaService.VerificarMigrado(registro),
+                            idMarcacaoRelogio = registro.idMarcacaoRelogio
+                        });
+                    }
+                }catch(Exception e)
+                {
+                    _logger.LogError(e, $"Não foi possível migrar o registro {registro.idMarcacaoRelogio} do servidor {registro.Matricula}");
                 }
             }
             _context.SaveChanges();

@@ -44,6 +44,10 @@ namespace PontoSync.Service
             try
             {
                 var servidor = _frequenciaContext.Servidores.FromSqlRaw($"select s.mat_servidor, s.nom, s.e_mail from srh2.servidor s where s.mat_servidor = {int.Parse(registro.Matricula)} ").FirstOrDefault();
+                if(servidor == null)
+                {
+                    throw new Exception($"Erro, não existe o servidor {registro.Matricula} no Banco SGRH.");
+                }
                 if (VerificarDuplicado(registro, servidor.Matricula))
                 {
                     _logger.LogWarning("Tentando lançar registro duplicado.");

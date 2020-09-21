@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PontoSync.Data;
 using PontoSync.Models;
+using X.PagedList;
 
 namespace PontoSync.Controllers
 {
@@ -22,9 +23,11 @@ namespace PontoSync.Controllers
         }
 
         // GET: MarcacaoFrequencias
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pagina )
         {
-            return View(await _context.MarcacaoFrequencia.Where(mf => mf.DataMarcacao > DateTime.Now.AddDays(-7)).OrderBy(mf=> mf.DataMarcacao ).ToListAsync());
+            const int itensPorPagina = 30;
+            int numeroPagina = (pagina ?? 1);
+            return View(await _context.MarcacaoFrequencia.OrderBy(mf=> mf.DataMarcacao).ThenBy(mf=> mf.HoraMarcacao).ToPagedListAsync(numeroPagina, itensPorPagina));
         }
 
         [Authorize(Policy = "GRUPO_AUTORIZACAO")]

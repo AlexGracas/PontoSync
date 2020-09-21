@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace PontoSync.Models
@@ -30,6 +31,7 @@ namespace PontoSync.Models
         public int IdRelogio { get; set; }
 
         [ForeignKey("IdRelogio")]
+        [JsonIgnore]
         public Relogio Relogio { get; set; }
         
         [NotMapped]

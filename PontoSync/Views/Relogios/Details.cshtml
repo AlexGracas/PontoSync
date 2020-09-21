@@ -24,7 +24,7 @@
                 <input id="datepickerFim" type="text" class="form-control dtpicker" value="@ViewBag.Fim.ToString("yyyy-MM-dd")" />
             </dd>
         </dl>
-        <a onclick="visualizar();" class="btn btn-primary float-right" role="button">Visualizar</a>
+        <button onclick="visualizar()" class="btn btn-primary float-right">Visualizar</button>
     </div>   
     <dl class="row">
         <dt class="col-sm-2">
@@ -66,8 +66,9 @@
     </dl>
     <h4>Marcações da última semana</h4>
     <hr />
-    <a asp-action="MigrarIntervalo" asp-route-id="@Model.Id" asp-route-inicio="@Model.Registros.Min(r=>r.Marcacao).ToString("yyyy-MM-dd")"
-       asp-route-fim="@Model.Registros.Max(r=>r.Marcacao).ToString("yyyy-MM-dd")" class="btn btn-primary float-right" role="button">Migrar Todos</a>
+    @if(Model.Registros!=null && Model.Registros.Count() > 0){
+        <button onclick="Migrar()" class="btn btn-primary float-right">Migrar Todos</button>
+    }
     <div></div>
     <table class="table">
         <thead>
@@ -121,12 +122,40 @@
 
 @section Scripts{
     <script>
-        $(function () {
+
+        $(
+            function () {
             $(".dtpicker").datepicker();
         });
-        function visualizar(){
-            window.location.href = "/Relogios/Details/" + @Model.Id + "/" + document.getElementById("datepickerInicio").value +
-                "/" + document.getElementById("datepickerFim").value;
+        function visualizar() {
+            var dtInicio = document.getElementById("datepickerInicio").value;
+            var dtFim = document.getElementById("datepickerFim").value;
+            var URL = "/Relogios/Details/" + @Model.Id + "/";
+            if (dtInicio != "" && dtFim != "") {
+                URL += dtInicio + "/" + dtFim;
+            }
+            window.location.href = URL;
+        };
+        function Migrar() {
+            var URL = "/Relogios/MigrarRegistros/" + @Model.Id;
+            var data = "["+ @Json.Serialize(Model.Registros.Where(rg => !rg.Migrado).Select(rg => rg.Id).ToList()) +"]";
+            var dataType = 'application/json; charset=utf-8';
+            $.ajax({
+                type: 'POST',
+                url: URL,
+                contentType: dataType,
+                data: data,
+                success: function () {
+                    alert("Registros Migrados com Sucesso.");
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("xhr"+xhr);
+                    console.log("status"+status);
+                    console.log("error"+error);
+                    alert("Não foi possível migrar os Registros para o Frequencia Nacional.");
+                }
+            });
         };
 
     </script>

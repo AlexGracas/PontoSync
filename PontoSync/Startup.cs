@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using PontoSync.Data;
 using PontoSync.Service;
 using PontoSync.Service.Cron;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -40,9 +38,14 @@ namespace PontoSync
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             IdentityModelEventSource.ShowPII = true;
             services.AddControllersWithViews();
-
+            services.AddHealthChecks();
+            if (Environment.IsDevelopment())
+            {
+                services.AddMvc().AddRazorRuntimeCompilation();
+            }
             //options.UseOracleSQLCompatibility("11")
             //Se não colocar esta opção irá gerar sqls que não serão executadas no Oracle 11.
 
@@ -119,6 +122,7 @@ namespace PontoSync
 
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -128,7 +132,6 @@ namespace PontoSync
                        name: "areas",
                        areaName: "myarea",
                            pattern: "{area:exists}/{controller=Home}/{did?}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
             });
         }
     }

@@ -50,8 +50,28 @@ namespace PontoSync.Service
                 {
                     try
                     {
-                        IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(_serviceProvider.CreateScope().ServiceProvider, typeof(RelogioHenry));                        
-                        relogioService.LerRelogioELancarAsync(relogio, DateTime.Now.AddHours(-1), DateTime.Now);
+                        IRelogioService relogioService = (IRelogioService)ActivatorUtilities.CreateInstance(_serviceProvider.CreateScope().ServiceProvider, typeof(RelogioHenry));
+                        DateTime inicio;
+                        //Se nunca havia sido lido antes, ler os últimos 60 minutos.
+                        if (relogio.UltimoSucesso == null)
+                        {
+                            inicio = DateTime.Now.AddMinutes(-60);
+                        }
+                        else
+                        {
+                            //Se já havia sido lido, recuperar no máximo 3 dias de leitura.
+                            if((DateTime.Now.Date - relogio.UltimoSucesso.Value.Date).TotalDays > 3)
+                            {
+                                inicio = DateTime.Now.AddDays(-3);
+                            }
+                            //Se a leitura é recente ler desde o último sucesso, e 15 minutos de sobreposição.
+                            else
+                            {
+                                inicio = relogio.UltimoSucesso.Value.AddMinutes(-15);
+                            }
+                            
+                        }                                                
+                        relogioService.LerRelogioELancarAsync(relogio, inicio , DateTime.Now, true);
                     }
                     catch (Exception e)
                     {

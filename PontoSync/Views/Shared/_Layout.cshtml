@@ -21,15 +21,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="MarcacaoFrequencias" asp-action="Index">Marcações</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="MarcacaoFrequencias" asp-action="Index">Marcações Frequência</a>
                         </li>
+                        <span>|</span>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Relogios" asp-action="Index">Relógios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Registros" asp-action="Index">Registros nos Relógios</a>
                         </li>
+                        }else{
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Relogios" asp-action="Index">Log-in</a>
+                        </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -43,7 +51,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - PontoSync - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2020 - PontoSync - TRE-PR
         </div>
     </footer>
     <script src="/lib/jquery/dist/jquery.js"></script>

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<PontoSync.Models.MarcacaoFrequencia>
+﻿@model X.PagedList.IPagedList<PontoSync.Models.MarcacaoFrequencia>
+@using X.PagedList.Mvc.Core;
 
 @{
     ViewData["Title"] = "Index";
@@ -6,41 +7,38 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.MatServidor)
+                @Html.DisplayNameFor(model => model[0].MatServidor)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DataMarcacao)
+                @Html.DisplayNameFor(model => model[0].DataMarcacao)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.HoraMarcacao)
+                @Html.DisplayNameFor(model => model[0].HoraMarcacao)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dispositivo)
+                @Html.DisplayNameFor(model => model[0].Dispositivo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StatusMarcacao)
+                @Html.DisplayNameFor(model => model[0].StatusMarcacao)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TipoOrigem)
+                @Html.DisplayNameFor(model => model[0].TipoOrigem)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Sq_Importacao)
+                @Html.DisplayNameFor(model => model[0].Sq_Importacao)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Usuario)
+                @Html.DisplayNameFor(model => model[0].Usuario)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.MatServidor)
@@ -67,9 +65,10 @@
                 @Html.DisplayFor(modelItem => item.Usuario)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+@Html.PagedListPager(Model, pagina => Url.Action("Index", new { pagina }))

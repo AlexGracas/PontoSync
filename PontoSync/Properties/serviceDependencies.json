@@ -1,9 +1,5 @@
 {
   "dependencies": {
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "PontoSyncIdentityContextConnection"
-    },
     "secrets1": {
       "type": "secrets"
     }
